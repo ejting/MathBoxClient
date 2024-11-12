@@ -1,2 +1,3 @@
 # MathBoxClient
- the clientside for the mathbox game
+ the client-side for the MathBox game
+
