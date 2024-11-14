@@ -1,0 +1,135 @@
+/*https://www.youtube.com/watch?v=OfSlkvtCeaI*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .App-header {
+    font-family: 'Arial', sans-serif;
+    background-color: #222;
+    color: #fff;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .buttons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+  }
+
+  h1 {
+    position: absolute;
+    top: 25vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  @media only screen and (max-width: 600px) {
+    .buttons {
+      position: absolute;
+      top: 50%;
+      left: 50vw;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+
+    }
+    .App-header {
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      flex-direction: row;
+    }
+  }
+  
+  button {
+    background-color: #5f5fc4;
+    color: white;
+    font-size: 1.5rem;
+    padding: 15px 30px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+
+  
+  button:hover {
+    background-color: #3e3e8b;
+    transform: scale(1.05);
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
+  button:active {
+    transform: scale(1.02);
+  }
+  
+  .scrolling-symbols {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+  }
+
+  .scrolling-symbols::before {
+    content: '';
+    position: absolute;
+    left: 40px;
+    width: 100%;
+    height: 100%;
+  }
+  
+
+.text {
+    position: absolute;
+    top: 0px;
+    height: 20px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 5px #fff,
+    0 0 15px #fff,
+    0 0 30px #fff;
+    transform-origin: bottom;
+    animation: fall 2s linear forwards;
+  }
+  
+  /* Keyframes for falling animation */
+  @keyframes fall {
+    0% {
+      transform: translateY(0) scale(1);
+    }
+    65% {
+      transform: translateY(50vh) scale(1);
+    }
+    100% {
+      transform: translateY(75vh) scale(0);
+    }
+  }
+  
