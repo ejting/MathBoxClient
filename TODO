@@ -1,0 +1,8 @@
+TODO
+☐ ☑
+☐ Make it so that when the host leaves the room (not from starting the game), then it disconnects the host, probably us variable tracking to determine whether the host is leaving by button click VS from clicking off the webpage
+
+☐ Make it so that the server can determine whether a player has backed out of the webpage (host game room thing and disconnect that player if so)
+☐ Fix usernames not displaying correctly in host lobby
+☐ Make it so that players can choose their username in the main menu
+☐ Make it so that the join button has its own quick little webpage that you can type in the room codes into and then enter the rooms
