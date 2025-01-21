@@ -1,11 +1,16 @@
 import React, {useEffect, useState, useRef } from "react";
-import { Link, useParams  } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import "../css/host.css";
 
+let gameStarted = false;
+const TEMP_USERNAME = "Test username";
+
 const HostRoom = ({socket}) =>  {
+    const [listOfUsers, setListOfUsers] = useState([]);
     const [roomExists, setRoomExists] = useState(-1);
     const [isHost, setIsHost] = useState(false);
     let { roomId } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(!socket){
@@ -22,14 +27,49 @@ const HostRoom = ({socket}) =>  {
             if(hostStatus) {
                 setIsHost(true);
             }
+            else {
+                socket.emit("join-room-with-id", roomId, TEMP_USERNAME);
+                socket.off("NewUserJoinRoom");
+                socket.off("UserLeftRoom");
+            }
+        });
+        socket.on("NewUserJoinRoom", (givenUserName) => {
+            //listOfUsers.push(givenUserName);
+            setListOfUsers([...listOfUsers, givenUserName]);
+            console.log("I just had a new user join! " + givenUserName);
+            
+        });
+        socket.on("UserLeftRoom", (givenUserName) => {
+            listOfUsers.splice(listOfUsers.indexOf(givenUserName));
+            setListOfUsers([...listOfUsers]);
+            console.log("I just had a user leave: " + givenUserName);
+        });
+        socket.on("GoToMainGameRoom", (givenUserName) => {
+            navigate(`/game-room/${roomId}`);
+        });
+        socket.on("ForceAllLeaveRoom", () => {
+            gameStarted = false;
+            navigate(`/`);
         });
         
 
         socket.emit("does-room-exist", roomId);
         
-    
         return () => {
           socket.off("test");
+          socket.off("RoomExistence");
+          socket.off("GoToMainGameRoom");
+          socket.off("ForceAllLeaveRoom");
+          socket.off("NewUserJoinRoom");
+          socket.off("UserLeftRoom");
+
+          // May cause errors, may need to check if we are the host
+          /*if(isHost) {
+            socket.off("NewUserJoinRoom");
+            socket.off("UserLeftRoom");
+            
+          }*/
+          
         }
     
     }, [socket]);
@@ -37,8 +77,28 @@ const HostRoom = ({socket}) =>  {
     // On join
     useEffect(() => {
         console.log("Room id is " + roomId);
-
+        return () => {
+            if(!gameStarted) {
+                // Tells the server that we left the room
+                console.log("left the room");
+                if(socket != null) {
+                    socket.emit("left-host-room", TEMP_USERNAME);
+                }
+            }
+            gameStarted = false;
+        }
     }, []);
+
+    const startGame = () => {
+        if(!gameStarted) {
+            gameStarted = true;
+            socket.emit("start-math-box-game", roomId);
+        }
+    }
+
+    const goBackToMain = () => {
+        navigate(`/`);
+    }
     
 
 
@@ -49,23 +109,36 @@ const HostRoom = ({socket}) =>  {
             </div>) :
                 roomExists == 0 ? (<div>
                     <h1>ERROR! Room does not exist.</h1>
+
+                    <h2>Click button to leave</h2>
+                    <button onClick={() => {goBackToMain()}}>Go Back</button>
                 </div>) :
                 (<div>
-                <h1>Room Key: {roomId}</h1>
+                
 
-                {isHost ? (<h3>You are the host</h3>) : (null)}
-  
-                <div className="container">
+                {isHost ? (<div>
+                    <h1>Room Key: {roomId}</h1>
+                    <div className="container">
 
-                    <div className="scrolling-symbols">
+                    <h2>Joined Users:</h2>
+                    <div className="list-of-users">
+                        {listOfUsers.map((theUser) => {
+                            return <p>{theUser}</p>
+                        })}
                     </div>
 
 
                     <div className="buttons">
-                        <button className="join-btn">Start Game</button>
+                        <button className="join-btn" onClick={startGame}>Start Game</button>
+                        <button onClick={() => {goBackToMain()}}>Go Back</button>
 
                     </div>
                 </div>
+                </div>) : (<div>
+                    <h1>Waiting on the Host to start the game...</h1>
+                </div>)}
+  
+                
                 </div>)
             }
   

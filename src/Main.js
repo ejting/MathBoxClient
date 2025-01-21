@@ -81,7 +81,7 @@ const Main = ({socket}) =>  {
     socket.on("GetGameRoomId", (newRoomId) => {
       
       console.log("Hey i got it " + newRoomId);
-      navigate(`/game-room/${newRoomId}`);
+      navigate(`/host-room/${newRoomId}`);
       
       
       //history.push(`/game-room/${newRoomId}`);
@@ -96,6 +96,14 @@ const Main = ({socket}) =>  {
 
   async function getNewRoom() {
     await socket.emit("make-new-room");
+  }
+
+  const GoToJoinRoom = () => {
+    navigate("/join");
+  }
+
+  const GoToDevTest = () => {
+    navigate("/Dev-Test");
   }
 
 
@@ -114,15 +122,17 @@ const Main = ({socket}) =>  {
 
         <h1>MathBox</h1>
 
-        <div class="container">
+        <div className="container">
 
-            <div class="scrolling-symbols" ref={symbolHolder}>
+            <div className="scrolling-symbols" ref={symbolHolder}>
             </div>
 
 
-            <div class="buttons">
-              <button class="host-btn" onClick={getNewRoom}>Host</button>
-              <button class="join-btn">Join</button>
+            <div className="buttons">
+              <button className="host-btn" onClick={getNewRoom}>Host</button>
+              <button className="join-btn" onClick={() => {GoToJoinRoom()}}>Join</button>
+
+              <button className="host-btn" onClick={() => {(GoToDevTest())}}>Dev Test</button>
 
             </div>
         </div>
