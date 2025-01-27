@@ -2,15 +2,48 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLongArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import React, {useEffect, useState, useRef } from "react";
+import "../css/math_test.css";
 
 let input = "";
+
+const DIGIT_COUNT = 4;
+const UPPER_DIGIT_RANGE = 10;
+const LOWER_DIGIT_RANGE = 0;
 
 const DevTestEngine = ({socket}) =>  {
 
     const navigate = useNavigate();
+    const [numberToMake, setNumberToMake] = useState(0);
+    const [givenNumbers, setGivenNumbers] = useState([]);
     const [displayedInput, setDisplayedInput] = useState("");
     const [computation, setComputation] = useState("");
 
+    useEffect(() => {
+        // Temporary tester for having values at the start
+        // Serves as a "mounter" for values we should already have / grabbed
+
+        console.log("Start random number making");
+        const tempList = [];
+        for(let i = 0; i < DIGIT_COUNT; i++) {
+            //setGivenNumbers([...givenNumbers, getRandomDigit()]);
+            tempList.push(getRandomDigit(LOWER_DIGIT_RANGE, UPPER_DIGIT_RANGE));
+        }
+        setGivenNumbers([...givenNumbers, ...tempList]);
+
+        setNumberToMake(getRandomDigit(0, 1000));
+
+        //setGivenNumbers((prevArray) => [...prevArray, ...tempList]);
+        console.log("made the new list of numbers => " + tempList);
+
+        
+    }, []);
+
+
+    const getRandomDigit = (lower, upper) => {
+        return Math.floor(Math.random() * (upper - lower)) + lower;
+    }
+
+    
 
     const goBackToMain = () => {
         navigate(`/`);
@@ -128,39 +161,75 @@ const DevTestEngine = ({socket}) =>  {
         setDisplayedInput(input);
         validateInputToCompute();
     }
+    
+    // Draggable Unit to hold either math operations or
+    // numbers
+    //
+    const DraggableUnit = ({heldToken}) => {
+        return (
+            <div
+                draggable="true"
+            >
+                {heldToken}
+            </div>
+        );
+    }
+
+    // Following this tutorial:
+    //https://www.youtube.com/watch?v=O5lZqqy7VQE
+    // For drag and drop UI
 
     return(
         <header className="App-header">
-            <h1>Dev Test {input} | {computation}</h1>
+            <div className="horizontal-organizer">
+                <h1 className="math-title">Make the Number {numberToMake} | {displayedInput} --&gt; {computation} | <DraggableUnit heldToken={1}/></h1>
 
-            <h2></h2>
+                <div className="answer-box">
 
-            <div className="number-pad">
-                <div className="number-row">
-                    <button onClick={() => {inputNumber(1)}}>1</button>
-                    <button onClick={() => {inputNumber(2)}}>2</button>
-                    <button onClick={() => {inputNumber(3)}}>3</button>
                 </div>
-                <div className="number-row">    
-                    <button onClick={() => {inputNumber(4)}}>4</button>
-                    <button onClick={() => {inputNumber(5)}}>5</button>
-                    <button onClick={() => {inputNumber(6)}}>6</button>
+                {/*
+                <div className="number-pad">
+                    <div className="number-row">
+                        <button onClick={() => {inputNumber(1)}}>1</button>
+                        <button onClick={() => {inputNumber(2)}}>2</button>
+                        <button onClick={() => {inputNumber(3)}}>3</button>
+                    </div>
+                    <div className="number-row">    
+                        <button onClick={() => {inputNumber(4)}}>4</button>
+                        <button onClick={() => {inputNumber(5)}}>5</button>
+                        <button onClick={() => {inputNumber(6)}}>6</button>
+                    </div>
+                    <div className="number-row">
+                        <button onClick={() => {inputNumber(7)}}>7</button>
+                        <button onClick={() => {inputNumber(8)}}>8</button>
+                        <button onClick={() => {inputNumber(9)}}>9</button>
+                    </div>
+                    <div className="number-row">
+                        <button onClick={() => {inputNumber(0)}}>0</button>
+                        <button onClick={() => {deleteInput()}}><FontAwesomeIcon icon={faLongArrowLeft}/></button>
+                    </div>
                 </div>
-                <div className="number-row">
-                    <button onClick={() => {inputNumber(7)}}>7</button>
-                    <button onClick={() => {inputNumber(8)}}>8</button>
-                    <button onClick={() => {inputNumber(9)}}>9</button>
+                */}
+                <button onClick={() => {deleteInput()}}><FontAwesomeIcon icon={faLongArrowLeft}/></button>
+                <div className="number-options-container">
+                    {givenNumbers.map((number, index) => {
+                        return <button
+                            onClick={() => {inputNumber(number)}}
+                            key={index}
+                        >
+                            {number}    
+                        </button>
+                    })}
                 </div>
-                <div className="number-row">
-                    <button onClick={() => {inputNumber(0)}}>0</button>
-                    <button onClick={() => {deleteInput()}}><FontAwesomeIcon icon={faLongArrowLeft}/></button>
-                </div>
+
+                <button onClick={() => {inputOperator('+')}}>+</button>
+                <button onClick={() => {inputOperator('-')}}>-</button>
+                <button onClick={() => {inputOperator('*')}}>*</button>
+                <button onClick={() => {inputOperator('/')}}>/</button>
+                <button onClick={() => {inputOperator('(')}}>(</button>
+                <button onClick={() => {inputOperator(')')}}>)</button>
             </div>
 
-            <button onClick={() => {inputOperator('+')}}>+</button>
-            <button onClick={() => {inputOperator('-')}}>-</button>
-            <button onClick={() => {inputOperator('*')}}>*</button>
-            <button onClick={() => {inputOperator('/')}}>/</button>
 
             
         <button onClick={() => {goBackToMain()}}>Go Back</button>

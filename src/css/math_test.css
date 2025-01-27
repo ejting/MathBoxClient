@@ -1,0 +1,18 @@
+
+.horizontal-organizer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    float: left;
+}
+
+.answer-box {
+    margin: 500px auto 0 auto;
+    width: 60%;
+    height: 200px;
+    background-color: darkslategray;
+}
+
+h2.math-title {
+    
+}

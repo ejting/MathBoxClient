@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef } from "react";
 import { Link, useNavigate} from 'react-router-dom';
+import Cookies from "js-cookie";
 import './main.css';
 
 
@@ -15,6 +16,7 @@ const Main = ({socket}) =>  {
   const navigate = useNavigate();
 
   const symbolHolder = useRef();
+  const usernameInputBox = useRef();
   
 
  /* useEffect(() => {
@@ -50,6 +52,11 @@ const Main = ({socket}) =>  {
 
 
   useEffect(() => {
+
+    const storedUsername = Cookies.get("username");
+    if(storedUsername) {
+      usernameInputBox.current.value = storedUsername;
+    }
 
     let timer;
     let intervalId = setInterval(() => {
@@ -106,6 +113,10 @@ const Main = ({socket}) =>  {
     navigate("/Dev-Test");
   }
 
+  const setUsername = (givenName) => {
+    Cookies.set("username", givenName);
+  }
+
 
 
 
@@ -134,6 +145,15 @@ const Main = ({socket}) =>  {
 
               <button className="host-btn" onClick={() => {(GoToDevTest())}}>Dev Test</button>
 
+            </div>
+            <div>
+              <h2>Username</h2>
+              <input
+                type="text"
+                placeholder="Type username here..."
+                onChange={(e) => setUsername(e.target.value)}
+                ref={usernameInputBox}
+              />
             </div>
         </div>
       </header>
